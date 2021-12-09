@@ -14,8 +14,7 @@ public class CombineGenome {
         this.processInfo = processInfo;
     }
 
-
-    public String analisePieces(HashMap<String, Sequence> map) {
+    public String analisePiecesAndGetResult(HashMap<String, Sequence> map) {
         StringBuilder result = new StringBuilder();
         ArrayList<Sequence> array = collect(getSortedList(map));
         result.append("{\n\"definingLength\": \"")
@@ -81,7 +80,6 @@ public class CombineGenome {
         }
         return sequenceArray;
     }
-
 
     private ArrayList<Sequence> collect(ArrayList<LinkedHashSet<Sequence>> sourceList){
         ArrayList<Sequence> trueSeq=new ArrayList<>();

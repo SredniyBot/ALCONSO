@@ -7,6 +7,7 @@ import covid.analise.virusanalisator.obtaining.VirusCollection;
 import covid.analise.virusanalisator.obtaining.VirusPrototype;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,39 +29,35 @@ public class MainProcess {
     private final VirusSlicer virusSlicer;
     private final SequenceCollection sequenceCollection;
     private final CombineGenome combineGenome;
-    private final Window window;
     private final ProcessInfo processInfo;
     private String destinationUrl;
 
-    MainProcess(Window window, Data data, VirusSlicer virusSlicer,
+    MainProcess(Data data, VirusSlicer virusSlicer,
                 SequenceCollection sequenceCollection, CombineGenome combineGenome, ProcessInfo processInfo){
         this.data = data;
         this.virusSlicer = virusSlicer;
         this.sequenceCollection = sequenceCollection;
-        this.combineGenome = combineGenome;
-        this.window = window;
-        this.processInfo = processInfo;
-    }
-
-    @PostConstruct
-    public void init(){
-        window.setOnStart(()->startWork());
+        this.combineGenome = combineGenome;this.processInfo = processInfo;
     }
 
     public void startWork(){
-        data.getResources();
-        createDirectory();
-        VirusCollection virusCollection=data.getVirusCollection();
-        startProcessing(virusCollection);
-        String result =combineGenome.analisePieces(sequenceCollection.getBestSequencesAsMap());
-        System.out.println("write results");
-        recordResults(result);
-        processInfo.setStatus("Done!");
+        try {
+            data.getResources();
+            createDirectory();
+            VirusCollection virusCollection=data.getVirusCollection();
+            startProcessing(virusCollection);
+            String result =combineGenome.analisePiecesAndGetResult(sequenceCollection.getBestSequencesAsMap());
+            System.out.println("write results");
+            recordResults(result);
+            processInfo.setStatus("Done!");
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null,e.getMessage(),"Error",1);
+        }
     }
 
     public void createDirectory(){
         destinationUrl=processInfo.getDestinationUrl();
-        destinationUrl+="\\"+new Date().toString().replaceAll(" ","_").replaceAll(":","-");
+        destinationUrl+=File.separator+new Date().toString().replaceAll(" ","_").replaceAll(":","-");
         new File(destinationUrl).mkdir();
     }
 
@@ -88,8 +85,9 @@ public class MainProcess {
     private void recordResults(String res){
         try {
             System.out.println(destinationUrl);
-            new File(destinationUrl+"\\results.json").createNewFile();
-            Path path = Paths.get(destinationUrl+"\\results.json");
+            String url=destinationUrl+File.separator+"results.json";
+            new File(url).createNewFile();
+            Path path = Paths.get(url);
             List<String> strings=res.lines().collect(Collectors.toList());
             Files.write(path, strings, StandardCharsets.UTF_8);
         } catch (IOException e) {

@@ -2,14 +2,12 @@ package covid.analise.virusanalisator.gui;
 
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Objects;
 
 @Component
-public class Window extends JFrame {
+public class Window extends JFrame implements Observer{
 
     private final ProcessInfo processInfo;
 
@@ -45,12 +43,10 @@ public class Window extends JFrame {
 
     private long startTime;
 
-    @PostConstruct
-    public void init(){
+    public void createWindow(){
         setSize(420,500);
         setMinimumSize(new Dimension(500,600));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
         JPanel mainPanel=new JPanel(new BorderLayout());
         JPanel startPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,10,10));
         JPanel infoPanel=new JPanel(new GridLayout(10,1,40,-10));
@@ -134,7 +130,6 @@ public class Window extends JFrame {
         setVisible(true);
     }
 
-
     private void startBeginningActivities(){
         closeInterface();
         startTime=System.currentTimeMillis();
@@ -195,38 +190,6 @@ public class Window extends JFrame {
         return null;
     }
 
-
-    public void rewriteData(){
-        srcUrl.setText(processInfo.getSourceUrl());
-        outUrl.setText(processInfo.getDestinationUrl());
-        numberOfGenomes.setText(String.valueOf(processInfo.getNumberOfGenomes()));
-        numberOfNGenomes.setText(String.valueOf(processInfo.getNumberOfNGenomes()));
-        numberOfDownloadedGenomes.setText(String.valueOf(processInfo.getNumberOfDownloadedGenomes()));
-        numberOfAnalysedGenomes.setText(String.valueOf(processInfo.getNumberOfAnalysedGenomes()));
-
-        downloadingOfGenomes.setMaximum(processInfo.getNumberOfGenomes());
-        downloadingOfGenomes.setValue(processInfo.getNumberOfDownloadedGenomes());
-
-        numberOfRightGenomes.setText(String.valueOf(processInfo.getNumberOfRightGenomes()));
-        sortingOfGenomes.setMaximum(processInfo.getNumberOfRightGenomes());
-        if(processInfo.isUseNGenomes()) {
-            analysedGenomes.setMaximum(processInfo.getNumberOfGenomes());
-        }else {
-            analysedGenomes.setMaximum(processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes());
-        }
-        analysedGenomes.setValue(processInfo.getNumberOfAnalysedGenomes());
-
-        if(Objects.equals("Done!", processInfo.getStatus())) {
-            isWorking=false;
-            long t = System.currentTimeMillis() - startTime;
-            String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
-            status.setText(processInfo.getStatus() + " " + date);
-        }
-
-    }
-
-
-
     private void closeInterface(){
         start.setEnabled(false);
         sourceButton.setEnabled(false);
@@ -234,5 +197,49 @@ public class Window extends JFrame {
         useN.setEnabled(false);
         chooseScatter.setEnabled(false);
     }
+
+    @Override
+    public void changeState(UpdateParam updateParam) {
+        switch (updateParam){
+            case SOURCE:
+                srcUrl.setText(processInfo.getSourceUrl());
+                break;
+            case DESTINATION:
+                outUrl.setText(processInfo.getDestinationUrl());
+                break;
+            case NUMBER_OF_GENOMES:
+                numberOfGenomes.setText(String.valueOf(processInfo.getNumberOfGenomes()));
+                break;
+            case NUMBER_OF_N_GENOMES:
+                numberOfNGenomes.setText(String.valueOf(processInfo.getNumberOfNGenomes()));
+                break;
+            case NUMBER_OF_DOWNLOADED_GENOMES:
+                numberOfDownloadedGenomes.setText(String.valueOf(processInfo.getNumberOfDownloadedGenomes()));
+                downloadingOfGenomes.setValue(processInfo.getNumberOfDownloadedGenomes());
+                downloadingOfGenomes.setMaximum(processInfo.getNumberOfGenomes());
+                break;
+            case NUMBER_OF_ANALYSED_GENOMES:
+                numberOfAnalysedGenomes.setText(String.valueOf(processInfo.getNumberOfAnalysedGenomes()));
+                if(processInfo.isUseNGenomes()) {
+                    analysedGenomes.setMaximum(processInfo.getNumberOfGenomes());
+                }else {
+                    analysedGenomes.setMaximum(processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes());
+                }
+                analysedGenomes.setValue(processInfo.getNumberOfAnalysedGenomes());
+                break;
+            case NUMBER_OF_RIGHT_GENOMES:
+                numberOfRightGenomes.setText(String.valueOf(processInfo.getNumberOfRightGenomes()));
+                sortingOfGenomes.setMaximum(processInfo.getNumberOfRightGenomes());
+                break;
+            case STATUS:
+                isWorking=false;
+                long t = System.currentTimeMillis() - startTime;
+                String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
+                status.setText(processInfo.getStatus() + " " + date);
+                break;
+        }
+
+    }
+
 
 }

@@ -7,11 +7,11 @@ import javax.swing.*;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class Data {
@@ -29,11 +29,11 @@ public class Data {
         File source=new File(processInfo.getSourceUrl());
         ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         if (source.exists()) {
-            processInfo.setNumberOfGenomes(Objects.requireNonNull(source.listFiles()).length);                                                    //!!!!!!!!
+            processInfo.setNumberOfGenomes(countFiles(source));
             manageTasks(source,service);
             service.shutdown();
             try {
-                service.awaitTermination(2, TimeUnit.DAYS);
+                service.awaitTermination(7, TimeUnit.DAYS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -43,7 +43,7 @@ public class Data {
     }
 
     private void manageTasks(File source, ExecutorService service){
-        for(File currentFile: Objects.requireNonNull(source.listFiles())) {
+        for(File currentFile: getFiles(Arrays.asList(source.listFiles()))) {
             Runnable runnable= () -> {
                 String content=getFileContent(currentFile);
                 VirusPrototype prototype=getVirusPrototypeFromJson(content);
@@ -52,6 +52,26 @@ public class Data {
             };
             service.submit(runnable);
         }
+    }
+
+
+    private int countFiles(File source){
+        if(source.isDirectory()){
+            return getFiles(Arrays.asList(source.listFiles())).size();
+        }
+        return 0;
+    }
+
+    private List<File> getFiles(List<File> source){
+        ArrayList<File> list =new ArrayList<>();
+        for (File s:source) {
+            if (s.isDirectory()){
+                if (s.listFiles() != null) {
+                    list.addAll(getFiles(Arrays.asList(s.listFiles())));
+                }
+            } else list.add(s);
+        }
+        return list;
     }
 
     private synchronized void fillProcessInfo(VirusPrototype virusPrototype){
@@ -72,7 +92,7 @@ public class Data {
         return decodeJson(virusJson);
     }
 
-    public String getFileContent(File source){ //f.listFiles()[0]);
+    public String getFileContent(File source){
         InputStream is = null;
         try {
             is = new FileInputStream(source);

@@ -1,16 +1,17 @@
 package covid.analise.virusanalisator.gui;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ProcessInfo {
 
-    private  Window window ;
+    private List<Observer> observers =new ArrayList<>();
     //@Value("${sourceURL}")
     private volatile String sourceUrl=getPath();
     //@Value("${URLout}")
@@ -37,7 +38,7 @@ public class ProcessInfo {
 
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
-        notifyWindow();
+        inform(UpdateParam.SOURCE);
     }
 
     public String getDestinationUrl() {
@@ -46,7 +47,7 @@ public class ProcessInfo {
 
     public void setDestinationUrl(String destinationUrl) {
         this.destinationUrl = destinationUrl;
-        notifyWindow();
+        inform(UpdateParam.DESTINATION);
     }
 
     public int getNumberOfGenomes() {
@@ -55,7 +56,7 @@ public class ProcessInfo {
 
     public synchronized void setNumberOfGenomes(int number) {
         this.numberOfGenomes =number;
-        notifyWindow();
+        inform(UpdateParam.NUMBER_OF_GENOMES);
     }
 
     public int getNumberOfNGenomes() {
@@ -64,7 +65,7 @@ public class ProcessInfo {
 
     public synchronized void increaseNumberOfNGenomes() {
         this.numberOfNGenomes ++;
-        notifyWindow();
+        inform(UpdateParam.NUMBER_OF_N_GENOMES);
     }
 
     public int getNumberOfDownloadedGenomes() {
@@ -73,7 +74,7 @@ public class ProcessInfo {
 
     public synchronized void increaseNumberOfDownloadedGenomes() {
         this.numberOfDownloadedGenomes++;
-        notifyWindow();
+        inform(UpdateParam.NUMBER_OF_DOWNLOADED_GENOMES);
     }
 
     public int getDefiningLength() {
@@ -82,7 +83,7 @@ public class ProcessInfo {
 
     public void setDefiningLength(int definingLength) {
         this.definingLength = definingLength;
-        notifyWindow();
+//        inform();
     }
 
     public String getStatus() {
@@ -91,7 +92,7 @@ public class ProcessInfo {
 
     public synchronized void setStatus(String status) {
         Status = status;
-        notifyWindow();
+        inform(UpdateParam.STATUS);
     }
 
     public int getNumberOfAnalysedGenomes() {
@@ -108,7 +109,7 @@ public class ProcessInfo {
 
     public synchronized void increaseNumberOfAnalysedGenomes() {
         this.numberOfAnalysedGenomes ++;
-        notifyWindow();
+        inform(UpdateParam.NUMBER_OF_ANALYSED_GENOMES);
     }
 
     public boolean isUseNGenomes() {
@@ -125,6 +126,7 @@ public class ProcessInfo {
 
     public void increaseNumberOfCombinedGenomes() {
         this.numberOfCombinedGenomes ++;
+        inform(UpdateParam.NUMBER_OF_COMBINED_GENOMES);
     }
 
     public int getNumberOfRightGenomes() {
@@ -133,16 +135,18 @@ public class ProcessInfo {
 
     public void increaseNumberOfRightGenomes() {
         this.numberOfRightGenomes ++;
-        notifyWindow();
+        inform(UpdateParam.NUMBER_OF_RIGHT_GENOMES);
     }
 
-    @Autowired
-    public void setWindow(Window window) {
-        this.window = window;
+
+    public void addObserver(Observer observer){
+        observers.add(observer);
     }
 
-    public void notifyWindow(){
-        window.rewriteData();
+    private void inform(UpdateParam updateParam){
+        for(Observer observer:observers){
+            observer.changeState(updateParam);
+        }
     }
 
     private String  getPath(){
