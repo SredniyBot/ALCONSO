@@ -44,7 +44,6 @@ public class CombineGenome {
     }
 
     private ArrayList<LinkedHashSet<Sequence>> getSortedList(HashMap<String, Sequence> map) {
-
         ArrayList<LinkedHashSet<Sequence>> sequenceArray = new ArrayList<>();
         while (!map.isEmpty()) {
             LinkedHashSet<Sequence> sequenceLinkedSet = new LinkedHashSet<>();

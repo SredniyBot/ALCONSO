@@ -1,12 +1,10 @@
 package covid.analise.virusanalisator;
 
 import covid.analise.virusanalisator.gui.ProcessInfo;
-import covid.analise.virusanalisator.gui.Window;
 import covid.analise.virusanalisator.obtaining.Data;
 import covid.analise.virusanalisator.obtaining.VirusCollection;
 import covid.analise.virusanalisator.obtaining.VirusPrototype;
 import org.springframework.stereotype.Component;
-import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;

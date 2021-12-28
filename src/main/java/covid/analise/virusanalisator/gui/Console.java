@@ -1,12 +1,9 @@
 package covid.analise.virusanalisator.gui;
 
-import org.springframework.stereotype.Component;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-@Component
 public class Console implements Observer{
 
     private final ProcessInfo processInfo;
@@ -27,8 +24,8 @@ public class Console implements Observer{
 
 
     public void runConsole(){
-        processInfo.setSourceUrl(getDir("Choose input folder"));
-        processInfo.setDestinationUrl(getDir("Choose output folder"));
+        processInfo.setSourceUrl(getDir("\n\n\nChoose input folder:"));
+        processInfo.setDestinationUrl(getDir("Choose output folder:"));
         processInfo.setUseNGenomes(useN());
         startBeginningActivities();
     }

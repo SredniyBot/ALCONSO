@@ -1,12 +1,15 @@
 package covid.analise.virusanalisator.gui;
 
-import org.springframework.stereotype.Component;
+import org.springframework.boot.web.servlet.server.Session;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-@Component
+
 public class Window extends JFrame implements Observer{
 
     private final ProcessInfo processInfo;
@@ -240,6 +243,7 @@ public class Window extends JFrame implements Observer{
         }
 
     }
+
 
 
 }
