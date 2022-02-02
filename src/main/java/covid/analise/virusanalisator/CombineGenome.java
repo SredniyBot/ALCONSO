@@ -2,7 +2,6 @@ package covid.analise.virusanalisator;
 
 import covid.analise.virusanalisator.gui.ProcessInfo;
 import org.springframework.stereotype.Component;
-
 import java.util.*;
 
 @Component

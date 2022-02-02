@@ -63,7 +63,7 @@ public class MainProcess {
         ExecutorService service= Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         HashSet<VirusPrototype> workSet;
 
-        if(processInfo.isUseNGenomes())workSet=virusCollection.getViruses();
+        if(processInfo.isUseNGenomes())     workSet=virusCollection.getViruses();
         else workSet=virusCollection.getVirusesWithoutN();
 
         for(VirusPrototype virus:workSet){
