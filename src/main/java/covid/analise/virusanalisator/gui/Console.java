@@ -15,13 +15,9 @@ public class Console implements Observer{
 
     private boolean first=true;
 
-
-
-    Console(ProcessInfo processInfo){
+    public Console(ProcessInfo processInfo){
         this.processInfo=processInfo;
     }
-
-
 
     public void runConsole(){
         processInfo.setSourceUrl(getDir("\n\n\nChoose input folder:"));
@@ -62,7 +58,7 @@ public class Console implements Observer{
             while (isWorking) {
                 long t = System.currentTimeMillis() - startTime;
                 date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
-                try {
+                try {                                                               //TODO
                     Thread.sleep(900);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -182,6 +178,9 @@ public class Console implements Observer{
                 long t = System.currentTimeMillis() - startTime;
                 date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
                 consoleIt(processInfo.getStatus() + " " + date);
+                if(processInfo.getLogs()!=null){
+                    consoleIt("Logs:\n"+processInfo.getLogs());
+                }
                 break;
         }
 

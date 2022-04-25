@@ -48,9 +48,7 @@ public class CombineGenome {
             LinkedHashSet<Sequence> sequenceLinkedSet = new LinkedHashSet<>();
             List<Sequence> currentList = new ArrayList<>(map.values());
 
-            for (int i=0;i<currentList.size();i++) {
-                Sequence currentSeq = currentList.get(i);
-
+            for (Sequence currentSeq : currentList) {
                 map.remove(currentSeq.getSequence());
                 Sequence rightSeq = getSeqFromMap(map, currentSeq.getSequence().substring(1));
                 Sequence leftSeq = getSeqFromMap(map, currentSeq.getSequence().substring(0, currentSeq.getLength() - 1));

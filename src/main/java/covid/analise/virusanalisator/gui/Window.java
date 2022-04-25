@@ -16,7 +16,7 @@ public class Window extends JFrame implements Observer{
 
     ArrayList<Runnable> startActivity=new ArrayList<>();
 
-    Window(ProcessInfo processInfo){
+    public Window(ProcessInfo processInfo){
         this.processInfo = processInfo;
     }
 
@@ -141,7 +141,7 @@ public class Window extends JFrame implements Observer{
                 long t = System.currentTimeMillis() - startTime;
                 String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
                 status.setText(processInfo.getStatus() + " " + date);
-                try {
+                try {                                                           //TODO
                     Thread.sleep(900);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -203,43 +203,40 @@ public class Window extends JFrame implements Observer{
 
     @Override
     public void changeState(UpdateParam updateParam) {
-        switch (updateParam){
-            case SOURCE:
-                srcUrl.setText(processInfo.getSourceUrl());
-                break;
-            case DESTINATION:
-                outUrl.setText(processInfo.getDestinationUrl());
-                break;
-            case NUMBER_OF_GENOMES:
-                numberOfGenomes.setText(String.valueOf(processInfo.getNumberOfGenomes()));
-                break;
-            case NUMBER_OF_N_GENOMES:
-                numberOfNGenomes.setText(String.valueOf(processInfo.getNumberOfNGenomes()));
-                break;
-            case NUMBER_OF_DOWNLOADED_GENOMES:
+        switch (updateParam) {
+            case SOURCE -> srcUrl.setText(processInfo.getSourceUrl());
+            case DESTINATION -> outUrl.setText(processInfo.getDestinationUrl());
+            case NUMBER_OF_GENOMES -> numberOfGenomes.setText(String.valueOf(processInfo.getNumberOfGenomes()));
+            case NUMBER_OF_N_GENOMES -> numberOfNGenomes.setText(String.valueOf(processInfo.getNumberOfNGenomes()));
+            case NUMBER_OF_DOWNLOADED_GENOMES -> {
                 numberOfDownloadedGenomes.setText(String.valueOf(processInfo.getNumberOfDownloadedGenomes()));
                 downloadingOfGenomes.setValue(processInfo.getNumberOfDownloadedGenomes());
                 downloadingOfGenomes.setMaximum(processInfo.getNumberOfGenomes());
-                break;
-            case NUMBER_OF_ANALYSED_GENOMES:
+            }
+            case NUMBER_OF_ANALYSED_GENOMES -> {
                 numberOfAnalysedGenomes.setText(String.valueOf(processInfo.getNumberOfAnalysedGenomes()));
-                if(processInfo.isUseNGenomes()) {
+                if (processInfo.isUseNGenomes()) {
                     analysedGenomes.setMaximum(processInfo.getNumberOfGenomes());
-                }else {
+                } else {
                     analysedGenomes.setMaximum(processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes());
                 }
                 analysedGenomes.setValue(processInfo.getNumberOfAnalysedGenomes());
-                break;
-            case NUMBER_OF_RIGHT_GENOMES:
+            }
+            case NUMBER_OF_RIGHT_GENOMES -> {
                 numberOfRightGenomes.setText(String.valueOf(processInfo.getNumberOfRightGenomes()));
                 sortingOfGenomes.setMaximum(processInfo.getNumberOfRightGenomes());
-                break;
-            case STATUS:
-                isWorking=false;
+            }
+            case STATUS -> {
+                isWorking = false;
                 long t = System.currentTimeMillis() - startTime;
                 String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
                 status.setText(processInfo.getStatus() + " " + date);
-                break;
+                System.out.println(processInfo.getLogs());
+                if (processInfo.getLogs() != null) {
+                    JOptionPane.showMessageDialog(this, processInfo.getLogs(), "Logs", JOptionPane.INFORMATION_MESSAGE);
+                    System.out.println(processInfo.getLogs());
+                }
+            }
         }
 
     }

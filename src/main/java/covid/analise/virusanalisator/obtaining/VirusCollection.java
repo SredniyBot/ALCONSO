@@ -1,7 +1,10 @@
 package covid.analise.virusanalisator.obtaining;
 
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Component
 public class VirusCollection {
@@ -15,9 +18,11 @@ public class VirusCollection {
     }
 
     public synchronized void addVirus(VirusPrototype v){
-        viruses.add(v);
-        if(!v.isNNN()){
-            virusesWithoutN.add(v);
+        if (v.getCriticalError()==null){
+            viruses.add(v);
+            if(!v.isNNN()){
+                virusesWithoutN.add(v);
+            }
         }
     }
 
@@ -28,4 +33,10 @@ public class VirusCollection {
     public HashSet<VirusPrototype> getVirusesWithoutN() {
         return virusesWithoutN;
     }
+
+    public void destroy(){
+        viruses.clear();
+        virusesWithoutN.clear();
+    }
+
 }

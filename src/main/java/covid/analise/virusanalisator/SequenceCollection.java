@@ -3,21 +3,22 @@ package covid.analise.virusanalisator;
 import covid.analise.virusanalisator.gui.ProcessInfo;
 import org.springframework.stereotype.Component;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
 public class SequenceCollection {
 
-    private final HashMap<String, Sequence> sequences;
+    private final ConcurrentHashMap<String, Sequence> sequences;
 
     private final ProcessInfo processInfo;
 
     public SequenceCollection(ProcessInfo processInfo) {
         this.processInfo = processInfo;
-        sequences=new HashMap<>();
+        sequences=new ConcurrentHashMap<>();
     }
 
-    private synchronized void addSequence(Sequence seq){
+    private void addSequence(Sequence seq){
         if(sequences.containsKey(seq.getSequence()))
             sequences.get(seq.getSequence()).addSequenceQuantity(seq.getQuantity());
         else sequences.put(seq.getSequence(), seq);

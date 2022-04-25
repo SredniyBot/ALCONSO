@@ -11,13 +11,13 @@ import java.util.List;
 @Component
 public class ProcessInfo {
 
-    private List<Observer> observers =new ArrayList<>();
+    private final List<Observer> observers =new ArrayList<>();
     //@Value("${sourceURL}")
     private volatile String sourceUrl=getPath();
     //@Value("${URLout}")
     private volatile String destinationUrl=getPath();
     @Value("${length}")
-    private int definingLength;
+    private static int definingLength;
     @Value("${gapInResults}")
     private volatile int scatterInResults;
     private volatile int numberOfGenomes;
@@ -30,6 +30,7 @@ public class ProcessInfo {
 
     private volatile String Status="Processing";
 
+    private String logs;
 
 
     public String getSourceUrl() {
@@ -77,13 +78,8 @@ public class ProcessInfo {
         inform(UpdateParam.NUMBER_OF_DOWNLOADED_GENOMES);
     }
 
-    public int getDefiningLength() {
+    public static int getDefiningLength() {
         return definingLength;
-    }
-
-    public void setDefiningLength(int definingLength) {
-        this.definingLength = definingLength;
-//        inform();
     }
 
     public String getStatus() {
@@ -124,7 +120,7 @@ public class ProcessInfo {
         return numberOfCombinedGenomes;
     }
 
-    public void increaseNumberOfCombinedGenomes() {
+    public synchronized void increaseNumberOfCombinedGenomes() {
         this.numberOfCombinedGenomes ++;
         inform(UpdateParam.NUMBER_OF_COMBINED_GENOMES);
     }
@@ -133,7 +129,7 @@ public class ProcessInfo {
         return numberOfRightGenomes;
     }
 
-    public void increaseNumberOfRightGenomes() {
+    public synchronized void increaseNumberOfRightGenomes() {
         this.numberOfRightGenomes ++;
         inform(UpdateParam.NUMBER_OF_RIGHT_GENOMES);
     }
@@ -143,10 +139,19 @@ public class ProcessInfo {
         observers.add(observer);
     }
 
+
     private void inform(UpdateParam updateParam){
         for(Observer observer:observers){
             observer.changeState(updateParam);
         }
+    }
+
+    public String getLogs() {
+        return logs;
+    }
+
+    public void setLogs(String logs) {
+        this.logs = logs;
     }
 
     private String  getPath(){

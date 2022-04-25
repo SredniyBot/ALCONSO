@@ -18,7 +18,7 @@ public class Sequence {
         maxQuantity=quantity;
     }
 
-    public void addSequenceQuantity(int l) {
+    public synchronized void addSequenceQuantity(int l) {
         quantity += l;
         minQuantity=quantity;
         maxQuantity=quantity;
