@@ -103,7 +103,7 @@ public class Data {
         VirusJson virusJson=jsonDecoder.fromJson(json, (Type) VirusJson.class);
         VirusPrototype virusPrototype = new VirusPrototype();
         virusPrototype.setName(virusJson.dataset);
-        virusPrototype.setFasta(virusJson.sequence);
+        virusPrototype.setFasta(virusJson.sequence.toLowerCase());
         if(virusPrototype.getCriticalError()!=null){
             logger.addDataError("Data format error (The genome is not taken into account):\n\t "+ path+
                     "\n\t\t"+virusPrototype.getCriticalError());

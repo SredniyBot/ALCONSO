@@ -22,8 +22,9 @@ public class Logger {
 
     public void startLogger(){
         programErrors=new ArrayList<>();
+        dataErrors=new ArrayList<>();
+        dataWarnings=new ArrayList<>();
         createDirectory();
-
     }
 
     public void createDirectory(){
