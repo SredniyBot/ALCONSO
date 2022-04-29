@@ -16,8 +16,7 @@ public class ProcessInfo {
     private volatile String sourceUrl=getPath();
     //@Value("${URLout}")
     private volatile String destinationUrl=getPath();
-    @Value("${length}")
-    private static int definingLength;
+    private static int definingLength=40;
     @Value("${gapInResults}")
     private volatile int scatterInResults;
     private volatile int numberOfGenomes;
@@ -26,6 +25,8 @@ public class ProcessInfo {
     private volatile boolean useNGenomes=false;
     private volatile int numberOfAnalysedGenomes;
     private volatile int numberOfCombinedGenomes;
+    private volatile int numberOfGenomeErrors;
+    private volatile int numberOfGenomeWarnings;
     private volatile int numberOfRightGenomes;
 
     private volatile String Status="Processing";
@@ -52,7 +53,7 @@ public class ProcessInfo {
     }
 
     public int getNumberOfGenomes() {
-        return numberOfGenomes;
+        return numberOfGenomes-numberOfGenomeErrors;
     }
 
     public synchronized void setNumberOfGenomes(int number) {
@@ -134,11 +135,9 @@ public class ProcessInfo {
         inform(UpdateParam.NUMBER_OF_RIGHT_GENOMES);
     }
 
-
     public void addObserver(Observer observer){
         observers.add(observer);
     }
-
 
     private void inform(UpdateParam updateParam){
         for(Observer observer:observers){
@@ -166,5 +165,23 @@ public class ProcessInfo {
             path=path.substring(0,path.lastIndexOf(File.separatorChar));
         }
         return path;
+    }
+
+    public int getNumberOfGenomeErrors() {
+        return numberOfGenomeErrors;
+    }
+
+    public void setNumberOfGenomeErrors(int numberOfGenomeErrors) {
+        this.numberOfGenomeErrors = numberOfGenomeErrors;
+        inform(UpdateParam.NUMBER_OF_ERRORS);
+    }
+
+    public int getNumberOfGenomeWarnings() {
+        return numberOfGenomeWarnings;
+    }
+
+    public void setNumberOfGenomeWarnings(int numberOfGenomeWarnings) {
+        this.numberOfGenomeWarnings = numberOfGenomeWarnings;
+        inform(UpdateParam.NUMBER_OF_WARNINGS);
     }
 }

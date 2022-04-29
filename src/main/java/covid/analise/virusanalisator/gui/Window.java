@@ -1,12 +1,7 @@
 package covid.analise.virusanalisator.gui;
 
-import org.springframework.boot.web.servlet.server.Session;
-
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 
@@ -137,15 +132,10 @@ public class Window extends JFrame implements Observer{
         closeInterface();
         startTime=System.currentTimeMillis();
         Thread timeThread = new Thread(() -> {
-            while (isWorking) {
+            while (isWorking) {//TODO
                 long t = System.currentTimeMillis() - startTime;
                 String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
                 status.setText(processInfo.getStatus() + " " + date);
-                try {                                                           //TODO
-                    Thread.sleep(900);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         });
         timeThread.start();
@@ -166,7 +156,7 @@ public class Window extends JFrame implements Observer{
             String src=chooseDirectory();
             if(src!=null)
             if(isSource)processInfo.setSourceUrl(src);
-            else processInfo.setDestinationUrl(src);
+//            else processInfo.setDestinationUrl(src);   TODO ????
         });
         return choose;
     }
@@ -231,11 +221,6 @@ public class Window extends JFrame implements Observer{
                 long t = System.currentTimeMillis() - startTime;
                 String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
                 status.setText(processInfo.getStatus() + " " + date);
-                System.out.println(processInfo.getLogs());
-                if (processInfo.getLogs() != null) {
-                    JOptionPane.showMessageDialog(this, processInfo.getLogs(), "Logs", JOptionPane.INFORMATION_MESSAGE);
-                    System.out.println(processInfo.getLogs());
-                }
             }
         }
 

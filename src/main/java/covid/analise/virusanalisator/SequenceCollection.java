@@ -18,7 +18,7 @@ public class SequenceCollection {
         sequences=new ConcurrentHashMap<>();
     }
 
-    private void addSequence(Sequence seq){
+    private synchronized void addSequence(Sequence seq){
         if(sequences.containsKey(seq.getSequence()))
             sequences.get(seq.getSequence()).addSequenceQuantity(seq.getQuantity());
         else sequences.put(seq.getSequence(), seq);

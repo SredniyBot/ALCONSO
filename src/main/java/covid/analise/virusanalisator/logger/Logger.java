@@ -1,8 +1,10 @@
 package covid.analise.virusanalisator.logger;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,6 +21,8 @@ public class Logger {
     private ArrayList<String> dataWarnings;
     private Path outputDir;
     private Path logFile;
+    @Value("${isConsoled}")
+    private boolean isConsoled;
 
     public void startLogger(){
         programErrors=new ArrayList<>();
@@ -92,7 +96,22 @@ public class Logger {
             result.append("\n");
         }
 
-
         return result.toString();
+    }
+
+    public void message(String message){
+        if (isConsoled) {
+            System.out.println(message);
+        }else {
+            JOptionPane.showConfirmDialog(null,message);
+        }
+    }
+
+
+    public int getNumberOfGenomeErrors(){
+        return dataErrors.size();
+    }
+    public int getNumberOfGenomeWarnings(){
+        return dataWarnings.size();
     }
 }

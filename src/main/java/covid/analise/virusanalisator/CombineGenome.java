@@ -17,7 +17,7 @@ public class CombineGenome {
         StringBuilder result = new StringBuilder();
         ArrayList<Sequence> array = collect(getSortedList(map));
         result.append("{\n\"definingLength\": \"")
-                .append(processInfo.getDefiningLength()).append("\",\n")
+                .append(ProcessInfo.getDefiningLength()).append("\",\n")
                 .append(" \"scatterInResults\": \"")
                 .append(processInfo.getScatterInResults())
                 .append("\",\n").append(" \"numberOfGenomes\": \"")

@@ -10,7 +10,7 @@ public class VirusPrototype {
     private String name;
     private String fasta;
 
-    private ArrayList<String> criticalLog;
+    private String criticalLog;
     private String dataMessage;
 
     public boolean isNNN(){
@@ -30,9 +30,8 @@ public class VirusPrototype {
     }
 
     public void setFasta(String fasta) {
-        criticalLog =new ArrayList<>();
-        if(Strings.isBlank(fasta)){
-            criticalLog.add("Fasta is empty");
+        if(Strings.isBlank(fasta)||fasta.equals("")){
+            criticalLog=("Fasta is empty");
             this.fasta="";
         }else {
             String f = fasta.replaceAll("a", "")
@@ -48,9 +47,10 @@ public class VirusPrototype {
                     message.append(f.charAt(0));
                     f=f.replaceAll(String.valueOf(f.charAt(0)),"");
                 }
+                this.fasta=fasta;
                 dataMessage ="The following characters have been replaced by n: "+ message;
             }else if ((fasta.length()<= ProcessInfo.getDefiningLength())) {
-                criticalLog.add("Fasta is empty");
+                criticalLog=("Fasta is too small");
                 this.fasta="";
             }else {
                 this.fasta=fasta;
@@ -58,16 +58,9 @@ public class VirusPrototype {
         }
     }
 
+
     public String getCriticalError(){
-        if(criticalLog.isEmpty()){
-            return null;
-        }else {
-            StringBuilder msg = new StringBuilder("\t\t");
-            for (String m:criticalLog){
-                msg.append(m).append("\n\t\t");
-            }
-            return msg.toString();
-        }
+        return criticalLog;
     }
 
     public String getDataMessage(){

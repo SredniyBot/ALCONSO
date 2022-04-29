@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.DataFormatException;
 
 @Component
 public class Data {
@@ -36,12 +37,12 @@ public class Data {
             manageTasks(source,service);
             service.shutdown();
             try {
-                if(service.awaitTermination(1000, TimeUnit.DAYS)){
-                    System.out.println("Sorry, you were waiting for too long...");
-                }
+                service.awaitTermination(100, TimeUnit.DAYS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            processInfo.setNumberOfGenomeErrors(logger.getNumberOfGenomeErrors());
+            processInfo.setNumberOfGenomeWarnings(logger.getNumberOfGenomeWarnings());
         }else{
             logger.addProgramError(ProgramError.getProgramErrorById(6));
         }
@@ -60,6 +61,10 @@ public class Data {
                     logger.addDataError("File read error: "+currentFile.getAbsolutePath());
                 } catch (JsonSyntaxException e){
                     logger.addDataError("Json format error: "+currentFile.getAbsolutePath());
+                } catch (DataFormatException e) {
+                    logger.addDataError("Data format error (The genome is not taken into account):\n\t "+
+                            currentFile.getAbsolutePath()+
+                            "\n\t\t"+"Fasta is empty");
                 }
             };
             service.submit(runnable);
@@ -99,15 +104,16 @@ public class Data {
         }
     }
 
-    public VirusPrototype getVirusPrototypeFromJson(String json,String path) throws JsonSyntaxException {
+    public VirusPrototype getVirusPrototypeFromJson(String json,String path)
+            throws JsonSyntaxException, DataFormatException {
         VirusJson virusJson=jsonDecoder.fromJson(json, (Type) VirusJson.class);
+        if(virusJson==null){
+            throw new DataFormatException();
+        }
         VirusPrototype virusPrototype = new VirusPrototype();
         virusPrototype.setName(virusJson.dataset);
         virusPrototype.setFasta(virusJson.sequence.toLowerCase());
-        if(virusPrototype.getCriticalError()!=null){
-            logger.addDataError("Data format error (The genome is not taken into account):\n\t "+ path+
-                    "\n\t\t"+virusPrototype.getCriticalError());
-        }else {
+        if(virusPrototype.getCriticalError()==null){
             if (virusPrototype.getDataMessage() != null) {
                 logger.addDataWarning("Data format warning \n\t " + path +
                         "\n\t\t" + virusPrototype.getDataMessage());

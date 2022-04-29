@@ -47,6 +47,8 @@ public class ProcessConductor {
 
         VirusCollection virusCollection= data.getVirusCollection();
 
+
+
         startProcessing(virusCollection);
 
         String result =combineGenome.analisePiecesAndGetResult(sequenceCollection.getBestSequencesAsMap());
@@ -67,8 +69,6 @@ public class ProcessConductor {
         if(processInfo.isUseNGenomes()) workSet=virusCollection.getViruses();
         else workSet=virusCollection.getVirusesWithoutN();
 
-        virusCollection.destroy();          //TODO ???
-
         for(VirusPrototype virus:workSet){
             service.submit(() -> {
                 sequenceCollection.addSequences(virusSlicer.sliceVirus(virus));
@@ -77,9 +77,7 @@ public class ProcessConductor {
         }
         service.shutdown();
         try {
-            if(service.awaitTermination(10000, TimeUnit.DAYS)){
-                System.out.println("Sorry you were waiting for too long...");
-            }
+            service.awaitTermination(10000, TimeUnit.DAYS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

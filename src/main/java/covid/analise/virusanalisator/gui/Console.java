@@ -21,7 +21,9 @@ public class Console implements Observer{
 
     public void runConsole(){
         processInfo.setSourceUrl(getDir("\n\n\nChoose input folder:"));
-        processInfo.setDestinationUrl(getDir("Choose output folder:"));
+
+//        processInfo.setDestinationUrl(getDir("Choose output folder:"));  //TODO ?????
+
         processInfo.setUseNGenomes(useN());
         startBeginningActivities();
     }
@@ -139,8 +141,9 @@ public class Console implements Observer{
                     first=false;
                     consoleIt("Downloading of genomes have been started\n");
                 }
-                System.out.print(getScale(processInfo.getNumberOfDownloadedGenomes(),processInfo.getNumberOfGenomes())+
-                        processInfo.getNumberOfDownloadedGenomes()+"/"+processInfo.getNumberOfGenomes()+
+                System.out.print(getScale(
+                        processInfo.getNumberOfDownloadedGenomes(),
+                        processInfo.getNumberOfGenomes())+ processInfo.getNumberOfDownloadedGenomes()+"/"+processInfo.getNumberOfGenomes()+
                         "     genomes with n: "+
                         processInfo.getNumberOfNGenomes()+"/"+processInfo.getNumberOfGenomes()+"    "+
                         date+
@@ -182,6 +185,13 @@ public class Console implements Observer{
                     consoleIt("Logs:\n"+processInfo.getLogs());
                 }
                 break;
+            case NUMBER_OF_ERRORS:
+                System.out.println("Number of genome errors: "+processInfo.getNumberOfGenomeErrors());
+                break;
+            case NUMBER_OF_WARNINGS:
+                System.out.println("Number of genome warnings: "+processInfo.getNumberOfGenomeWarnings());
+                break;
+
         }
 
     }

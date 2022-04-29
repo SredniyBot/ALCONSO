@@ -1,8 +1,8 @@
 package covid.analise.virusanalisator;
 
 import covid.analise.virusanalisator.gui.Console;
-import covid.analise.virusanalisator.gui.ProcessInfo;
 import covid.analise.virusanalisator.gui.Window;
+import covid.analise.virusanalisator.gui.ProcessInfo;
 import covid.analise.virusanalisator.logger.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public class Start{
                 processInfo.addObserver(window);
                 window.createWindow();
             }catch (Exception e){
-                System.out.println("Your system doesnt support java gui," +
+                logger.message("Your system doesnt support java gui," +
                         " use 'consoled' parameter to start application in console");
             }
         }
