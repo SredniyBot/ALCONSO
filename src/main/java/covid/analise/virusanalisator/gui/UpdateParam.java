@@ -2,7 +2,6 @@ package covid.analise.virusanalisator.gui;
 
 public enum UpdateParam {
     SOURCE,
-    DESTINATION,
     NUMBER_OF_GENOMES,
     NUMBER_OF_N_GENOMES,
     NUMBER_OF_DOWNLOADED_GENOMES,

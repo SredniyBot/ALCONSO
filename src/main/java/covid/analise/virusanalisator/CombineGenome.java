@@ -16,6 +16,7 @@ public class CombineGenome {
     public String analisePiecesAndGetResult(HashMap<String, Sequence> map) {
         StringBuilder result = new StringBuilder();
         ArrayList<Sequence> array = collect(getSortedList(map));
+
         result.append("{\n\"definingLength\": \"")
                 .append(ProcessInfo.getDefiningLength()).append("\",\n")
                 .append(" \"scatterInResults\": \"")
@@ -47,7 +48,6 @@ public class CombineGenome {
         while (!map.isEmpty()) {
             LinkedHashSet<Sequence> sequenceLinkedSet = new LinkedHashSet<>();
             List<Sequence> currentList = new ArrayList<>(map.values());
-
             for (Sequence currentSeq : currentList) {
                 map.remove(currentSeq.getSequence());
                 Sequence rightSeq = getSeqFromMap(map, currentSeq.getSequence().substring(1));

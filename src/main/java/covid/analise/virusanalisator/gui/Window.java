@@ -15,9 +15,7 @@ public class Window extends JFrame implements Observer{
         this.processInfo = processInfo;
     }
 
-    private volatile boolean isWorking=true;
     private JLabel srcUrl;
-    private JLabel outUrl;
     private JLabel numberOfGenomes;
     private JLabel numberOfNGenomes;
     private JLabel numberOfDownloadedGenomes;
@@ -37,7 +35,6 @@ public class Window extends JFrame implements Observer{
 
     private JButton start;
     private JButton sourceButton;
-    private JButton destinationButton;
 
     private long startTime;
 
@@ -57,13 +54,6 @@ public class Window extends JFrame implements Observer{
                 getPanelWithParams("Input folder: ",srcUrl,sourceButton));
 
 
-        outUrl=new JLabel(processInfo.getDestinationUrl());
-
-        destinationButton=getFolderBtn("Choose output folder",false);
-        infoPanel.add(
-                getPanelWithParams("Output folder: ",outUrl,destinationButton));
-
-
         numberOfGenomes=new JLabel(String.valueOf(processInfo.getNumberOfGenomes()));
         numberOfNGenomes=new JLabel(String.valueOf(processInfo.getNumberOfNGenomes()));
         numberOfDownloadedGenomes=new JLabel(String.valueOf(processInfo.getNumberOfDownloadedGenomes()));
@@ -73,7 +63,8 @@ public class Window extends JFrame implements Observer{
         downloadingOfGenomes.setBackground(btnColor);
         downloadingOfGenomes.setBorderPainted(false);
 
-        chooseScatter =new JSlider(3,15,7);
+        chooseScatter =new JSlider(processInfo.getMinScatterInResults(),processInfo.getMaxScatterInResults(),
+                processInfo.getScatterInResults());
         chooseScatter.setMinorTickSpacing(1);
         chooseScatter.setMajorTickSpacing(6);
         chooseScatter.setPaintTicks(true);
@@ -131,14 +122,14 @@ public class Window extends JFrame implements Observer{
     private void startBeginningActivities(){
         closeInterface();
         startTime=System.currentTimeMillis();
-        Thread timeThread = new Thread(() -> {
-            while (isWorking) {//TODO
-                long t = System.currentTimeMillis() - startTime;
-                String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
-                status.setText(processInfo.getStatus() + " " + date);
-            }
-        });
-        timeThread.start();
+//        Thread timeThread = new Thread(() -> {
+//            while (isWorking) {//TODO
+//                long t = System.currentTimeMillis() - startTime;
+//                String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
+//                status.setText(processInfo.getStatus() + " " + date);
+//            }
+//        });
+//        timeThread.start();
         for(Runnable runnable:startActivity){
             Thread thread=new Thread(runnable);
             thread.start();
@@ -156,7 +147,6 @@ public class Window extends JFrame implements Observer{
             String src=chooseDirectory();
             if(src!=null)
             if(isSource)processInfo.setSourceUrl(src);
-//            else processInfo.setDestinationUrl(src);   TODO ????
         });
         return choose;
     }
@@ -186,7 +176,6 @@ public class Window extends JFrame implements Observer{
     private void closeInterface(){
         start.setEnabled(false);
         sourceButton.setEnabled(false);
-        destinationButton.setEnabled(false);
         useN.setEnabled(false);
         chooseScatter.setEnabled(false);
     }
@@ -195,7 +184,6 @@ public class Window extends JFrame implements Observer{
     public void changeState(UpdateParam updateParam) {
         switch (updateParam) {
             case SOURCE -> srcUrl.setText(processInfo.getSourceUrl());
-            case DESTINATION -> outUrl.setText(processInfo.getDestinationUrl());
             case NUMBER_OF_GENOMES -> numberOfGenomes.setText(String.valueOf(processInfo.getNumberOfGenomes()));
             case NUMBER_OF_N_GENOMES -> numberOfNGenomes.setText(String.valueOf(processInfo.getNumberOfNGenomes()));
             case NUMBER_OF_DOWNLOADED_GENOMES -> {
@@ -217,7 +205,6 @@ public class Window extends JFrame implements Observer{
                 sortingOfGenomes.setMaximum(processInfo.getNumberOfRightGenomes());
             }
             case STATUS -> {
-                isWorking = false;
                 long t = System.currentTimeMillis() - startTime;
                 String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
                 status.setText(processInfo.getStatus() + " " + date);

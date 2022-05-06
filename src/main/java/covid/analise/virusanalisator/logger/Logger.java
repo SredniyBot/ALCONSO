@@ -103,7 +103,11 @@ public class Logger {
         if (isConsoled) {
             System.out.println(message);
         }else {
-            JOptionPane.showConfirmDialog(null,message);
+            try {
+                JOptionPane.showConfirmDialog(null,message);
+            }catch (Exception e){
+                System.out.println(message);
+            }
         }
     }
 

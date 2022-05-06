@@ -13,7 +13,6 @@ public class Start{
 
     @Value("${isConsoled}")
     private boolean isConsoled;
-
     private final ProcessInfo processInfo;
     private final ProcessConductor processConductor;
     private final Logger logger;
@@ -28,12 +27,11 @@ public class Start{
     private void start(){
 
         logger.startLogger();
-
         if(isConsoled){
             Console console =new Console(processInfo);
-            console.setOnStart(processConductor::startWork);
             processInfo.addObserver(console);
-            console.runConsole();
+            console.run();
+            processConductor.startWork();
         }else {
             try {
                 Window window=new Window(processInfo);

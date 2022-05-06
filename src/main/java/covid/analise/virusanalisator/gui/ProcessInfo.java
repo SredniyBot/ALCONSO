@@ -14,11 +14,11 @@ public class ProcessInfo {
     private final List<Observer> observers =new ArrayList<>();
     //@Value("${sourceURL}")
     private volatile String sourceUrl=getPath();
-    //@Value("${URLout}")
-    private volatile String destinationUrl=getPath();
     private static int definingLength=40;
     @Value("${gapInResults}")
-    private volatile int scatterInResults;
+    private volatile int scatterInResults=7;
+    private volatile int minScatterInResults=3;
+    private volatile int maxScatterInResults=30;
     private volatile int numberOfGenomes;
     private volatile int numberOfNGenomes;
     private volatile int numberOfDownloadedGenomes;
@@ -41,15 +41,6 @@ public class ProcessInfo {
     public void setSourceUrl(String sourceUrl) {
         this.sourceUrl = sourceUrl;
         inform(UpdateParam.SOURCE);
-    }
-
-    public String getDestinationUrl() {
-        return destinationUrl;
-    }
-
-    public void setDestinationUrl(String destinationUrl) {
-        this.destinationUrl = destinationUrl;
-        inform(UpdateParam.DESTINATION);
     }
 
     public int getNumberOfGenomes() {
@@ -101,7 +92,24 @@ public class ProcessInfo {
     }
 
     public void setScatterInResults(int scatterInResults) {
-        this.scatterInResults = scatterInResults;
+        if(scatterInResults<minScatterInResults)this.scatterInResults=minScatterInResults;
+        else this.scatterInResults = Math.min(scatterInResults, maxScatterInResults);
+    }
+
+    public int getMinScatterInResults() {
+        return minScatterInResults;
+    }
+
+    public void setMinScatterInResults(int minScatterInResults) {
+        this.minScatterInResults = minScatterInResults;
+    }
+
+    public int getMaxScatterInResults() {
+        return maxScatterInResults;
+    }
+
+    public void setMaxScatterInResults(int maxScatterInResults) {
+        this.maxScatterInResults = maxScatterInResults;
     }
 
     public synchronized void increaseNumberOfAnalysedGenomes() {

@@ -20,7 +20,6 @@ public class Data {
 
     private final ProcessInfo processInfo;
     private final VirusCollection virusCollection;
-    private final Gson jsonDecoder = new Gson();
     private final Logger logger;
 
     Data(VirusCollection virusCollection, ProcessInfo processInfo, Logger logger) {
@@ -39,7 +38,7 @@ public class Data {
             try {
                 service.awaitTermination(100, TimeUnit.DAYS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.addProgramError(ProgramError.getProgramErrorById(10));
             }
             processInfo.setNumberOfGenomeErrors(logger.getNumberOfGenomeErrors());
             processInfo.setNumberOfGenomeWarnings(logger.getNumberOfGenomeWarnings());
@@ -106,7 +105,7 @@ public class Data {
 
     public VirusPrototype getVirusPrototypeFromJson(String json,String path)
             throws JsonSyntaxException, DataFormatException {
-        VirusJson virusJson=jsonDecoder.fromJson(json, (Type) VirusJson.class);
+        VirusJson virusJson=new Gson().fromJson(json, (Type) VirusJson.class);
         if(virusJson==null){
             throw new DataFormatException();
         }

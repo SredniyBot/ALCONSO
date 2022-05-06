@@ -1,16 +1,13 @@
 package covid.analise.virusanalisator;
 
 import covid.analise.virusanalisator.gui.ProcessInfo;
-import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Component
 public class SequenceCollection {
 
     private final ConcurrentHashMap<String, Sequence> sequences;
-
     private final ProcessInfo processInfo;
 
     public SequenceCollection(ProcessInfo processInfo) {
@@ -18,7 +15,7 @@ public class SequenceCollection {
         sequences=new ConcurrentHashMap<>();
     }
 
-    private synchronized void addSequence(Sequence seq){
+    private void addSequence(Sequence seq){
         if(sequences.containsKey(seq.getSequence()))
             sequences.get(seq.getSequence()).addSequenceQuantity(seq.getQuantity());
         else sequences.put(seq.getSequence(), seq);
@@ -29,7 +26,6 @@ public class SequenceCollection {
         for (Sequence seq:set) addSequence(seq);
     }
 
-    @Override
     public String toString() {
         StringBuilder s= new StringBuilder();
         LinkedHashSet<Sequence> sorted =sequences.values().stream().sorted(Comparator.comparingInt(Sequence::getQuantity).reversed())

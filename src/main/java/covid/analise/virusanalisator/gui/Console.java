@@ -1,40 +1,31 @@
 package covid.analise.virusanalisator.gui;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Console implements Observer{
 
     private final ProcessInfo processInfo;
-    ArrayList<Runnable> startActivity=new ArrayList<>();
 
     private long startTime;
-    private volatile boolean isWorking=true;
-    private String date="0";
-
     private boolean first=true;
 
     public Console(ProcessInfo processInfo){
         this.processInfo=processInfo;
     }
 
-    public void runConsole(){
-        processInfo.setSourceUrl(getDir("\n\n\nChoose input folder:"));
-
-//        processInfo.setDestinationUrl(getDir("Choose output folder:"));  //TODO ?????
-
+    public void run(){
+        processInfo.setSourceUrl(getDir());
         processInfo.setUseNGenomes(useN());
-        startBeginningActivities();
+        processInfo.setScatterInResults(getScatter());
+        startTime=System.currentTimeMillis();
     }
 
-
-    private String getDir(String message){
-        System.out.println(message);
+    private String getDir(){
+        System.out.println("\n\n\nChoose input folder:");
         Scanner scanner =new Scanner(System.in);
-        String res="";
         while (scanner.hasNextLine()){
-            res=scanner.nextLine();
+            String res=scanner.nextLine();
             if(new File(res).exists()){
                 return res;
             }
@@ -43,35 +34,31 @@ public class Console implements Observer{
     }
 
     private boolean useN(){
-        System.out.println("Choose genomes with N? (y/n)");
+        System.out.println("Include the genomes with ‘N’? (y/n)");
         Scanner scanner =new Scanner(System.in);
         String res=scanner.nextLine();
-        scanner.close();
         return res.contains("y")||res.contains("Y");
     }
 
-    public void setOnStart(Runnable runnable){
-        startActivity.add(runnable);
+    private int getScatter(){
+        System.out.println("\nSet scatter in results: "+processInfo.getMinScatterInResults()+"%-"
+                +processInfo.getMaxScatterInResults()+"%   - default: "+processInfo.getScatterInResults()+"%");
+        Scanner scanner =new Scanner(System.in);
+        try {
+            String res =scanner.nextLine();
+            int i = Integer.parseInt(res.replace("%", ""));
+            scanner.close();
+            System.out.println("Scatter in results set as: " + i+"%");
+            return i;
+        }catch (Exception e){
+            System.out.println("Scatter in results set as default: "+ processInfo.getScatterInResults());
+        }
+        return processInfo.getScatterInResults();
     }
 
-    private void startBeginningActivities(){
-        startTime=System.currentTimeMillis();
-        Thread timeThread = new Thread(() -> {
-            while (isWorking) {
-                long t = System.currentTimeMillis() - startTime;
-                date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
-                try {                                                               //TODO
-                    Thread.sleep(900);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        timeThread.start();
-        for(Runnable runnable:startActivity){
-            Thread thread=new Thread(runnable);
-            thread.start();
-        }
+    public String getDate(){
+        long t = System.currentTimeMillis() - startTime;
+        return t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
     }
 
 
@@ -125,73 +112,57 @@ public class Console implements Observer{
 
     @Override
     public void changeState(UpdateParam updateParam) {
-        switch (updateParam){
-            case SOURCE:
-                consoleIt("Path '"+processInfo.getSourceUrl()+"' set as source path");
-                break;
-            case DESTINATION:
-                consoleIt("Path '"+processInfo.getDestinationUrl()+"' set as destination path");
-                break;
-            case NUMBER_OF_GENOMES:
-                consoleIt(processInfo.getNumberOfGenomes()+ " genomes found      " +date+"\n");
-                break;
-            case NUMBER_OF_N_GENOMES:
-            case NUMBER_OF_DOWNLOADED_GENOMES:
-                if(first){
-                    first=false;
+        switch (updateParam) {
+            case SOURCE -> consoleIt("Path '" + processInfo.getSourceUrl() + "' set as source path");
+            case NUMBER_OF_GENOMES -> consoleIt(processInfo.getNumberOfGenomes() + " genomes found      " + getDate() + "\n");
+            case NUMBER_OF_N_GENOMES, NUMBER_OF_DOWNLOADED_GENOMES -> {
+                if (first) {
+                    first = false;
                     consoleIt("Downloading of genomes have been started\n");
                 }
                 System.out.print(getScale(
                         processInfo.getNumberOfDownloadedGenomes(),
-                        processInfo.getNumberOfGenomes())+ processInfo.getNumberOfDownloadedGenomes()+"/"+processInfo.getNumberOfGenomes()+
-                        "     genomes with n: "+
-                        processInfo.getNumberOfNGenomes()+"/"+processInfo.getNumberOfGenomes()+"    "+
-                        date+
+                        processInfo.getNumberOfGenomes()) + processInfo.getNumberOfDownloadedGenomes() + "/" + processInfo.getNumberOfGenomes() +
+                        "     genomes with n: " +
+                        processInfo.getNumberOfNGenomes() + "/" + processInfo.getNumberOfGenomes() + "    " +
+                        getDate() +
                         "                          \r");
-                break;
-            case NUMBER_OF_ANALYSED_GENOMES:
-                if(!first){
-                    first=true;
+            }
+            case NUMBER_OF_ANALYSED_GENOMES -> {
+                if (!first) {
+                    first = true;
                     consoleIt("\n\nAnalysing of genomes have been started\n");
                 }
-                if(processInfo.isUseNGenomes()) {
-                    System.out.print(getScale(processInfo.getNumberOfAnalysedGenomes(),processInfo.getNumberOfGenomes())+
-                            processInfo.getNumberOfAnalysedGenomes()+"/"+processInfo.getNumberOfGenomes()+
-                            "       "+date+
+                if (processInfo.isUseNGenomes()) {
+                    System.out.print(getScale(processInfo.getNumberOfAnalysedGenomes(), processInfo.getNumberOfGenomes()) +
+                            processInfo.getNumberOfAnalysedGenomes() + "/" + processInfo.getNumberOfGenomes() +
+                            "       " + getDate() +
                             "                          \r");
 
-                }else {
+                } else {
                     System.out.print(getScale(processInfo.getNumberOfAnalysedGenomes(),
-                            processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes())+
-                            processInfo.getNumberOfAnalysedGenomes()+"/"+
-                            (processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes())+
-                            "       "+date+
+                            processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes()) +
+                            processInfo.getNumberOfAnalysedGenomes() + "/" +
+                            (processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes()) +
+                            "       " + getDate() +
                             "                          \r");
                 }
-                break;
-            case NUMBER_OF_RIGHT_GENOMES:
-                if(first){
-                    first=false;
+            }
+            case NUMBER_OF_RIGHT_GENOMES -> {
+                if (first) {
+                    first = false;
                     consoleIt("\nGetting of right genomes have been started");
                 }
-                System.out.print("Number of right genomes: "+processInfo.getNumberOfRightGenomes()+"        "+date+"                            \r");
-                break;
-            case STATUS:
-                isWorking=false;
-                long t = System.currentTimeMillis() - startTime;
-                date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
-                consoleIt(processInfo.getStatus() + " " + date);
-                if(processInfo.getLogs()!=null){
-                    consoleIt("Logs:\n"+processInfo.getLogs());
+                System.out.print("Number of right genomes: " + processInfo.getNumberOfRightGenomes() + "        " + getDate() + "                            \r");
+            }
+            case STATUS -> {
+                consoleIt(processInfo.getStatus() + " " + getDate());
+                if (processInfo.getLogs() != null) {
+                    consoleIt("Logs:\n" + processInfo.getLogs());
                 }
-                break;
-            case NUMBER_OF_ERRORS:
-                System.out.println("Number of genome errors: "+processInfo.getNumberOfGenomeErrors());
-                break;
-            case NUMBER_OF_WARNINGS:
-                System.out.println("Number of genome warnings: "+processInfo.getNumberOfGenomeWarnings());
-                break;
-
+            }
+            case NUMBER_OF_ERRORS -> System.out.println("Number of genome errors: " + processInfo.getNumberOfGenomeErrors());
+            case NUMBER_OF_WARNINGS -> System.out.println("Number of genome warnings: " + processInfo.getNumberOfGenomeWarnings());
         }
 
     }
