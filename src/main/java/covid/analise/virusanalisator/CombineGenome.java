@@ -16,9 +16,15 @@ public class CombineGenome {
     public String analisePiecesAndGetResult(HashMap<String, Sequence> map) {
         StringBuilder result = new StringBuilder();
         ArrayList<Sequence> array = collect(getSortedList(map));
-        result.append("{\n\"definingLength\": \"")
-                .append(processInfo.getDefiningLength()).append("\",\n")
-                .append(" \"scatterInResults\": \"")
+
+        result.append("{\n\"percentage of conservatism\": \"")
+                .append(round((double) processInfo.getMinSequenceQuantity() / processInfo.getNumberOfAnalysedGenomes() * 100))
+                .append("%-")
+                .append(round((double) processInfo.getMaxSequenceQuantity() / processInfo.getNumberOfAnalysedGenomes() * 100))
+                .append("%\",\n")
+                .append("\"definingLength\": \"")
+                .append(ProcessInfo.getDefiningLength()).append("\",\n")
+                .append("\"scatterInResults\": \"")
                 .append(processInfo.getScatterInResults())
                 .append("\",\n").append(" \"numberOfGenomes\": \"")
                 .append(processInfo.getNumberOfGenomes())
@@ -35,22 +41,24 @@ public class CombineGenome {
         result.append(" \"genomes\": [\n");
 
         for (Sequence seq : array) {
-            result.append(seq).append(",\n");
+            result.append(seq.getMessage(processInfo.getNumberOfAnalysedGenomes())).append(",\n");
         }
+        result.deleteCharAt(result.length()-1);
         result.deleteCharAt(result.length()-1);
         result.append("\n]\n}");
         return result.toString();
     }
 
+
+    private double round(double number){
+        return Math.round(number*100)/100.0;
+    }
     private ArrayList<LinkedHashSet<Sequence>> getSortedList(HashMap<String, Sequence> map) {
         ArrayList<LinkedHashSet<Sequence>> sequenceArray = new ArrayList<>();
         while (!map.isEmpty()) {
             LinkedHashSet<Sequence> sequenceLinkedSet = new LinkedHashSet<>();
             List<Sequence> currentList = new ArrayList<>(map.values());
-
-            for (int i=0;i<currentList.size();i++) {
-                Sequence currentSeq = currentList.get(i);
-
+            for (Sequence currentSeq : currentList) {
                 map.remove(currentSeq.getSequence());
                 Sequence rightSeq = getSeqFromMap(map, currentSeq.getSequence().substring(1));
                 Sequence leftSeq = getSeqFromMap(map, currentSeq.getSequence().substring(0, currentSeq.getLength() - 1));

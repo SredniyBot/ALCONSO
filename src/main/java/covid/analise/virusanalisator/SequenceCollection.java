@@ -1,23 +1,21 @@
 package covid.analise.virusanalisator;
 
 import covid.analise.virusanalisator.gui.ProcessInfo;
-import org.springframework.stereotype.Component;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Component
 public class SequenceCollection {
 
-    private final HashMap<String, Sequence> sequences;
-
+    private final ConcurrentHashMap<String, Sequence> sequences;
     private final ProcessInfo processInfo;
 
     public SequenceCollection(ProcessInfo processInfo) {
         this.processInfo = processInfo;
-        sequences=new HashMap<>();
+        sequences=new ConcurrentHashMap<>();
     }
 
-    private synchronized void addSequence(Sequence seq){
+    private void addSequence(Sequence seq){
         if(sequences.containsKey(seq.getSequence()))
             sequences.get(seq.getSequence()).addSequenceQuantity(seq.getQuantity());
         else sequences.put(seq.getSequence(), seq);
@@ -28,7 +26,6 @@ public class SequenceCollection {
         for (Sequence seq:set) addSequence(seq);
     }
 
-    @Override
     public String toString() {
         StringBuilder s= new StringBuilder();
         LinkedHashSet<Sequence> sorted =sequences.values().stream().sorted(Comparator.comparingInt(Sequence::getQuantity).reversed())
@@ -49,6 +46,9 @@ public class SequenceCollection {
                 reference.max =s.getQuantity();
             }
         }
+        processInfo.setMaxSequenceQuantity((int) reference.max);
+        processInfo.setMinSequenceQuantity((int) (reference.max-reference.max*processInfo.getScatterInResults()/100));
+
         ArrayList<Sequence> sorted = new ArrayList<>(sequences.values());
         double i= (reference.max- reference.max*processInfo.getScatterInResults()/100);
         sorted.removeIf(sequence -> sequence.getQuantity()< i);
@@ -57,6 +57,7 @@ public class SequenceCollection {
 
     public HashMap<String, Sequence> getBestSequencesAsMap(){
         ArrayList<Sequence> sequences =getBestSequences();
+
         HashMap<String, Sequence> seqs = new HashMap<>();
         for(Sequence s:sequences) seqs.put(s.getSequence(),s);
         return seqs;

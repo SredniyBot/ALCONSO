@@ -1,12 +1,7 @@
 package covid.analise.virusanalisator.gui;
 
-import org.springframework.boot.web.servlet.server.Session;
-
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 
@@ -16,13 +11,11 @@ public class Window extends JFrame implements Observer{
 
     ArrayList<Runnable> startActivity=new ArrayList<>();
 
-    Window(ProcessInfo processInfo){
+    public Window(ProcessInfo processInfo){
         this.processInfo = processInfo;
     }
 
-    private volatile boolean isWorking=true;
     private JLabel srcUrl;
-    private JLabel outUrl;
     private JLabel numberOfGenomes;
     private JLabel numberOfNGenomes;
     private JLabel numberOfDownloadedGenomes;
@@ -42,7 +35,6 @@ public class Window extends JFrame implements Observer{
 
     private JButton start;
     private JButton sourceButton;
-    private JButton destinationButton;
 
     private long startTime;
 
@@ -62,13 +54,6 @@ public class Window extends JFrame implements Observer{
                 getPanelWithParams("Input folder: ",srcUrl,sourceButton));
 
 
-        outUrl=new JLabel(processInfo.getDestinationUrl());
-
-        destinationButton=getFolderBtn("Choose output folder",false);
-        infoPanel.add(
-                getPanelWithParams("Output folder: ",outUrl,destinationButton));
-
-
         numberOfGenomes=new JLabel(String.valueOf(processInfo.getNumberOfGenomes()));
         numberOfNGenomes=new JLabel(String.valueOf(processInfo.getNumberOfNGenomes()));
         numberOfDownloadedGenomes=new JLabel(String.valueOf(processInfo.getNumberOfDownloadedGenomes()));
@@ -78,7 +63,8 @@ public class Window extends JFrame implements Observer{
         downloadingOfGenomes.setBackground(btnColor);
         downloadingOfGenomes.setBorderPainted(false);
 
-        chooseScatter =new JSlider(3,15,7);
+        chooseScatter =new JSlider(processInfo.getMinScatterInResults(),processInfo.getMaxScatterInResults(),
+                processInfo.getScatterInResults());
         chooseScatter.setMinorTickSpacing(1);
         chooseScatter.setMajorTickSpacing(6);
         chooseScatter.setPaintTicks(true);
@@ -86,17 +72,17 @@ public class Window extends JFrame implements Observer{
         chooseScatter.addChangeListener(e->processInfo.setScatterInResults(chooseScatter.getValue()));
         chooseScatter.setBackground(bgColor);
 
-        infoPanel.add(getPanelWithParams("Choose scatter in results(%):", chooseScatter));
+        infoPanel.add(getPanelWithParams("Set scatter in results(%):", chooseScatter));
 
 
-        useN =new JCheckBox("Use genomes with n ");
+        useN =new JCheckBox("Use genomes with <N> ");
         useN.addActionListener(e->processInfo.setUseNGenomes(!processInfo.isUseNGenomes()));
         useN.setBackground(bgColor);
         useN.setBorder(BorderFactory.createLineBorder(btnColor));
 
 
         infoPanel.add(getPanelWithParams("Number of genomes: ",numberOfGenomes));
-        infoPanel.add(getPanelWithParams("Number of genomes with N: ",numberOfNGenomes,useN));
+        infoPanel.add(getPanelWithParams("Number of genomes with <N>: ",numberOfNGenomes,useN));
         infoPanel.add(getPanelWithParams("Downloaded genomes: ",numberOfDownloadedGenomes,downloadingOfGenomes));
 
         analysedGenomes =new JProgressBar(0,0,processInfo.getNumberOfGenomes());
@@ -106,7 +92,7 @@ public class Window extends JFrame implements Observer{
 
 
         numberOfRightGenomes=new JLabel(String.valueOf(processInfo.getNumberOfRightGenomes()));
-        infoPanel.add(getPanelWithParams("Number of right genomes: ",numberOfRightGenomes));
+        infoPanel.add(getPanelWithParams("Number of the conserved regions found: ",numberOfRightGenomes));
 
 
         sortingOfGenomes =new JProgressBar(0,0,processInfo.getNumberOfGenomes());
@@ -136,19 +122,14 @@ public class Window extends JFrame implements Observer{
     private void startBeginningActivities(){
         closeInterface();
         startTime=System.currentTimeMillis();
-        Thread timeThread = new Thread(() -> {
-            while (isWorking) {
-                long t = System.currentTimeMillis() - startTime;
-                String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
-                status.setText(processInfo.getStatus() + " " + date);
-                try {
-                    Thread.sleep(900);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        timeThread.start();
+//        Thread timeThread = new Thread(() -> {
+//            while (isWorking) {//TODO
+//                long t = System.currentTimeMillis() - startTime;
+//                String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
+//                status.setText(processInfo.getStatus() + " " + date);
+//            }
+//        });
+//        timeThread.start();
         for(Runnable runnable:startActivity){
             Thread thread=new Thread(runnable);
             thread.start();
@@ -166,7 +147,6 @@ public class Window extends JFrame implements Observer{
             String src=chooseDirectory();
             if(src!=null)
             if(isSource)processInfo.setSourceUrl(src);
-            else processInfo.setDestinationUrl(src);
         });
         return choose;
     }
@@ -196,50 +176,39 @@ public class Window extends JFrame implements Observer{
     private void closeInterface(){
         start.setEnabled(false);
         sourceButton.setEnabled(false);
-        destinationButton.setEnabled(false);
         useN.setEnabled(false);
         chooseScatter.setEnabled(false);
     }
 
     @Override
     public void changeState(UpdateParam updateParam) {
-        switch (updateParam){
-            case SOURCE:
-                srcUrl.setText(processInfo.getSourceUrl());
-                break;
-            case DESTINATION:
-                outUrl.setText(processInfo.getDestinationUrl());
-                break;
-            case NUMBER_OF_GENOMES:
-                numberOfGenomes.setText(String.valueOf(processInfo.getNumberOfGenomes()));
-                break;
-            case NUMBER_OF_N_GENOMES:
-                numberOfNGenomes.setText(String.valueOf(processInfo.getNumberOfNGenomes()));
-                break;
-            case NUMBER_OF_DOWNLOADED_GENOMES:
+        switch (updateParam) {
+            case SOURCE -> srcUrl.setText(processInfo.getSourceUrl());
+            case NUMBER_OF_GENOMES -> numberOfGenomes.setText(String.valueOf(processInfo.getNumberOfGenomes()));
+            case NUMBER_OF_N_GENOMES -> numberOfNGenomes.setText(String.valueOf(processInfo.getNumberOfNGenomes()));
+            case NUMBER_OF_DOWNLOADED_GENOMES -> {
                 numberOfDownloadedGenomes.setText(String.valueOf(processInfo.getNumberOfDownloadedGenomes()));
                 downloadingOfGenomes.setValue(processInfo.getNumberOfDownloadedGenomes());
                 downloadingOfGenomes.setMaximum(processInfo.getNumberOfGenomes());
-                break;
-            case NUMBER_OF_ANALYSED_GENOMES:
+            }
+            case NUMBER_OF_ANALYSED_GENOMES -> {
                 numberOfAnalysedGenomes.setText(String.valueOf(processInfo.getNumberOfAnalysedGenomes()));
-                if(processInfo.isUseNGenomes()) {
+                if (processInfo.isUseNGenomes()) {
                     analysedGenomes.setMaximum(processInfo.getNumberOfGenomes());
-                }else {
+                } else {
                     analysedGenomes.setMaximum(processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes());
                 }
                 analysedGenomes.setValue(processInfo.getNumberOfAnalysedGenomes());
-                break;
-            case NUMBER_OF_RIGHT_GENOMES:
+            }
+            case NUMBER_OF_RIGHT_GENOMES -> {
                 numberOfRightGenomes.setText(String.valueOf(processInfo.getNumberOfRightGenomes()));
                 sortingOfGenomes.setMaximum(processInfo.getNumberOfRightGenomes());
-                break;
-            case STATUS:
-                isWorking=false;
+            }
+            case STATUS -> {
                 long t = System.currentTimeMillis() - startTime;
                 String date = t / 3600000 + ":" + t / 60000 % 60 + ":" + t / 1000 % 60;
                 status.setText(processInfo.getStatus() + " " + date);
-                break;
+            }
         }
 
     }

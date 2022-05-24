@@ -2,7 +2,7 @@ package covid.analise.virusanalisator;
 
 import java.util.Objects;
 
-public class Sequence {
+public class Sequence implements Comparable<Sequence>{
 
     private String sequence;
     private int quantity;
@@ -18,7 +18,7 @@ public class Sequence {
         maxQuantity=quantity;
     }
 
-    public void addSequenceQuantity(int l) {
+    public synchronized void addSequenceQuantity(int l) {
         quantity += l;
         minQuantity=quantity;
         maxQuantity=quantity;
@@ -68,6 +68,20 @@ public class Sequence {
                 sequence +"\"\n}";
     }
 
+    public String getMessage(double max){
+        return "{\n\"conservatism\": \"" +
+                Math.round((minQuantity/max*10000))/100.0+"%-"+
+                Math.round((maxQuantity/max*10000))/100.0+"%\""+
+                ",\n \"minQuantity\": \"" +
+                minQuantity +"\""+
+                ",\n \"maxQuantity\": \"" +
+                maxQuantity +"\""+
+                ",\n \"length\": \"" +
+                length +"\""+
+                ",\n \"sequence\": \"" +
+                sequence +"\"\n}";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -81,4 +95,9 @@ public class Sequence {
         return Objects.hash(sequence);
     }
 
+
+    @Override
+    public int compareTo(Sequence o) {
+        return Integer.compare(quantity,o.getQuantity());
+    }
 }
