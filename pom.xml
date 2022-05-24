@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>covid.analise</groupId>
-    <artifactId>VirusAnalisator</artifactId>
+    <artifactId>ALCONSO</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>VirusAnalisator</name>
-    <description>VirusAnalisator</description>
+    <name>ALCONSO</name>
+    <description>ALCONSO</description>
     <properties>
         <java.version>11</java.version>
     </properties>

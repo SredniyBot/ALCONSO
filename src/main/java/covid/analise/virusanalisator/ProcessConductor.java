@@ -33,7 +33,7 @@ public class ProcessConductor {
 
 
     public void startWork(){
-        VirusCollection virusCollection= data.getVirusCollection();
+        VirusCollection virusCollection= data.getVirusCollection();//Получение всех геномов из файлов
 
         SequenceCollection sequenceCollection =fillSequenceCollection(virusCollection);
 

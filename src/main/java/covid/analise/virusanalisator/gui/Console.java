@@ -34,15 +34,21 @@ public class Console implements Observer{
     }
 
     private boolean useN(){
-        System.out.println("Include the genomes with ‘N’? (y/n)");
+        System.out.println("Include the genomes with <N>? (y/n)     - default: n");
         Scanner scanner =new Scanner(System.in);
         String res=scanner.nextLine();
-        return res.contains("y")||res.contains("Y");
+        boolean contains=res.contains("y")||res.contains("Y");
+        if(contains){
+            System.out.println("Genomes with <N> will be used\n");
+        }else {
+            System.out.println("Genomes with <N> will not be used\n");
+        }
+        return contains;
     }
 
     private int getScatter(){
         System.out.println("\nSet scatter in results: "+processInfo.getMinScatterInResults()+"%-"
-                +processInfo.getMaxScatterInResults()+"%   - default: "+processInfo.getScatterInResults()+"%");
+                +processInfo.getMaxScatterInResults()+"%          - default: "+processInfo.getScatterInResults()+"%");
         Scanner scanner =new Scanner(System.in);
         try {
             String res =scanner.nextLine();
@@ -113,17 +119,17 @@ public class Console implements Observer{
     @Override
     public void changeState(UpdateParam updateParam) {
         switch (updateParam) {
-            case SOURCE -> consoleIt("Path '" + processInfo.getSourceUrl() + "' set as source path");
+            case SOURCE -> consoleIt("Path <" + processInfo.getSourceUrl() + "> set as source path");
             case NUMBER_OF_GENOMES -> consoleIt(processInfo.getNumberOfGenomes() + " genomes found      " + getDate() + "\n");
             case NUMBER_OF_N_GENOMES, NUMBER_OF_DOWNLOADED_GENOMES -> {
                 if (first) {
                     first = false;
-                    consoleIt("Downloading of genomes have been started\n");
+                    consoleIt("Downloading of the genomes has started");
                 }
                 System.out.print(getScale(
                         processInfo.getNumberOfDownloadedGenomes(),
                         processInfo.getNumberOfGenomes()) + processInfo.getNumberOfDownloadedGenomes() + "/" + processInfo.getNumberOfGenomes() +
-                        "     genomes with n: " +
+                        "     genomes with <N>: " +
                         processInfo.getNumberOfNGenomes() + "/" + processInfo.getNumberOfGenomes() + "    " +
                         getDate() +
                         "                          \r");
@@ -131,37 +137,37 @@ public class Console implements Observer{
             case NUMBER_OF_ANALYSED_GENOMES -> {
                 if (!first) {
                     first = true;
-                    consoleIt("\n\nAnalysing of genomes have been started\n");
+                    consoleIt("\nGenome conserved regions analysis has started");
                 }
                 if (processInfo.isUseNGenomes()) {
-                    System.out.print(getScale(processInfo.getNumberOfAnalysedGenomes(), processInfo.getNumberOfGenomes()) +
+                    System.out.print("\r"+getScale(processInfo.getNumberOfAnalysedGenomes(), processInfo.getNumberOfGenomes()) +
                             processInfo.getNumberOfAnalysedGenomes() + "/" + processInfo.getNumberOfGenomes() +
                             "       " + getDate() +
-                            "                          \r");
+                            "                          ");
 
                 } else {
-                    System.out.print(getScale(processInfo.getNumberOfAnalysedGenomes(),
+                    System.out.print("\r"+getScale(processInfo.getNumberOfAnalysedGenomes(),
                             processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes()) +
                             processInfo.getNumberOfAnalysedGenomes() + "/" +
                             (processInfo.getNumberOfGenomes() - processInfo.getNumberOfNGenomes()) +
                             "       " + getDate() +
-                            "                          \r");
+                            "                          ");
                 }
             }
             case NUMBER_OF_RIGHT_GENOMES -> {
                 if (first) {
                     first = false;
-                    consoleIt("\nGetting of right genomes have been started");
+                    consoleIt("\n\nFetching of the conserved regions has started");
                 }
-                System.out.print("Number of right genomes: " + processInfo.getNumberOfRightGenomes() + "        " + getDate() + "                            \r");
+                System.out.print("\rNumber of the conserved regions found: " + processInfo.getNumberOfRightGenomes() + "        " + getDate() + "                            \r");
             }
             case STATUS -> {
-                consoleIt(processInfo.getStatus() + " " + getDate());
+                consoleIt("\n"+processInfo.getStatus() + " " + getDate());
                 if (processInfo.getLogs() != null) {
                     consoleIt("Logs:\n" + processInfo.getLogs());
                 }
             }
-            case NUMBER_OF_ERRORS -> System.out.println("Number of genome errors: " + processInfo.getNumberOfGenomeErrors());
+            case NUMBER_OF_ERRORS -> System.out.println("\nNumber of genome errors: " + processInfo.getNumberOfGenomeErrors());
             case NUMBER_OF_WARNINGS -> System.out.println("Number of genome warnings: " + processInfo.getNumberOfGenomeWarnings());
         }
 

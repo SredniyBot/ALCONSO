@@ -28,6 +28,8 @@ public class ProcessInfo {
     private volatile int numberOfGenomeErrors;
     private volatile int numberOfGenomeWarnings;
     private volatile int numberOfRightGenomes;
+    private volatile int maxSequenceQuantity;
+    private volatile int minSequenceQuantity;
 
     private volatile String Status="Processing";
 
@@ -191,5 +193,21 @@ public class ProcessInfo {
     public void setNumberOfGenomeWarnings(int numberOfGenomeWarnings) {
         this.numberOfGenomeWarnings = numberOfGenomeWarnings;
         inform(UpdateParam.NUMBER_OF_WARNINGS);
+    }
+
+    public int getMaxSequenceQuantity() {
+        return maxSequenceQuantity;
+    }
+
+    public void setMaxSequenceQuantity(int maxSequenceQuantity) {
+        this.maxSequenceQuantity = maxSequenceQuantity;
+    }
+
+    public int getMinSequenceQuantity() {
+        return minSequenceQuantity;
+    }
+
+    public void setMinSequenceQuantity(int minSequenceQuantity) {
+        this.minSequenceQuantity = minSequenceQuantity;
     }
 }

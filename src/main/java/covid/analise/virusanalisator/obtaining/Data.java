@@ -38,7 +38,7 @@ public class Data {
             try {
                 service.awaitTermination(100, TimeUnit.DAYS);
             } catch (InterruptedException e) {
-                logger.addProgramError(ProgramError.getProgramErrorById(10));
+                logger.addProgramError(ProgramError.getProgramErrorById(2));
             }
             processInfo.setNumberOfGenomeErrors(logger.getNumberOfGenomeErrors());
             processInfo.setNumberOfGenomeWarnings(logger.getNumberOfGenomeWarnings());

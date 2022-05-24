@@ -46,6 +46,9 @@ public class SequenceCollection {
                 reference.max =s.getQuantity();
             }
         }
+        processInfo.setMaxSequenceQuantity((int) reference.max);
+        processInfo.setMinSequenceQuantity((int) (reference.max-reference.max*processInfo.getScatterInResults()/100));
+
         ArrayList<Sequence> sorted = new ArrayList<>(sequences.values());
         double i= (reference.max- reference.max*processInfo.getScatterInResults()/100);
         sorted.removeIf(sequence -> sequence.getQuantity()< i);
@@ -54,6 +57,7 @@ public class SequenceCollection {
 
     public HashMap<String, Sequence> getBestSequencesAsMap(){
         ArrayList<Sequence> sequences =getBestSequences();
+
         HashMap<String, Sequence> seqs = new HashMap<>();
         for(Sequence s:sequences) seqs.put(s.getSequence(),s);
         return seqs;

@@ -5,13 +5,13 @@ public class ProgramError {
     public static String getProgramErrorById(int id){
         switch (id){
             case 0 -> {
-                return "Error creating directory";
+                return "Directory creation error";
             }
             case 1 -> {
                 return "1";
             }
             case 2 -> {
-                return "";
+                return "Waiting limit exceeded";
             }
             case 3 -> {
                 return "Chosen file is not directory";
@@ -26,7 +26,7 @@ public class ProgramError {
                 return "Source folder doesnt exists";
             }
             default->{
-                return "111";
+                return "Unknown error";
             }
         }
     }

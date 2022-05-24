@@ -72,17 +72,17 @@ public class Window extends JFrame implements Observer{
         chooseScatter.addChangeListener(e->processInfo.setScatterInResults(chooseScatter.getValue()));
         chooseScatter.setBackground(bgColor);
 
-        infoPanel.add(getPanelWithParams("Choose scatter in results(%):", chooseScatter));
+        infoPanel.add(getPanelWithParams("Set scatter in results(%):", chooseScatter));
 
 
-        useN =new JCheckBox("Use genomes with n ");
+        useN =new JCheckBox("Use genomes with <N> ");
         useN.addActionListener(e->processInfo.setUseNGenomes(!processInfo.isUseNGenomes()));
         useN.setBackground(bgColor);
         useN.setBorder(BorderFactory.createLineBorder(btnColor));
 
 
         infoPanel.add(getPanelWithParams("Number of genomes: ",numberOfGenomes));
-        infoPanel.add(getPanelWithParams("Number of genomes with N: ",numberOfNGenomes,useN));
+        infoPanel.add(getPanelWithParams("Number of genomes with <N>: ",numberOfNGenomes,useN));
         infoPanel.add(getPanelWithParams("Downloaded genomes: ",numberOfDownloadedGenomes,downloadingOfGenomes));
 
         analysedGenomes =new JProgressBar(0,0,processInfo.getNumberOfGenomes());
@@ -92,7 +92,7 @@ public class Window extends JFrame implements Observer{
 
 
         numberOfRightGenomes=new JLabel(String.valueOf(processInfo.getNumberOfRightGenomes()));
-        infoPanel.add(getPanelWithParams("Number of right genomes: ",numberOfRightGenomes));
+        infoPanel.add(getPanelWithParams("Number of the conserved regions found: ",numberOfRightGenomes));
 
 
         sortingOfGenomes =new JProgressBar(0,0,processInfo.getNumberOfGenomes());
