@@ -1,5 +1,10 @@
-# VirusAnaliser
+# ALCONSO
 User manual for CovAch (COVIDs Achilles' heel) software
+
+# Подробная информация
+### [Описание АЛКОНСО.docx](https://github.com/SredniyBot/ALCONSO/files/9242863/default.docx)
+### [Реферат АЛКОНСО.docx](https://github.com/SredniyBot/ALCONSO/files/9242865/default.docx)
+![изображение](https://user-images.githubusercontent.com/43825919/182393643-43e32091-cd9b-4ac7-b2c6-3fbdc0b018c1.png)
 
 ## The functionality of this software
 
