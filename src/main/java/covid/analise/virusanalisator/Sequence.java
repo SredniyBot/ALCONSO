@@ -2,6 +2,7 @@ package covid.analise.virusanalisator;
 
 import java.util.Objects;
 
+
 public class Sequence implements Comparable<Sequence>{
 
     private String sequence;
