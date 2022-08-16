@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+
 public class SequenceCollection {
 
     private final ConcurrentHashMap<String, Sequence> sequences;

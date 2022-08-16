@@ -3,18 +3,16 @@ package covid.analise.virusanalisator.obtaining;
 import covid.analise.virusanalisator.gui.ProcessInfo;
 import org.apache.logging.log4j.util.Strings;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
-public class VirusPrototype {
+public class VirusModel {
 
     private String name;
-    private String fasta;
-
-    private String criticalLog;
+    private String sequence;
     private String dataMessage;
 
     public boolean isNNN(){
-        return fasta.contains("n");
+        return sequence.contains("n");
     }
 
     public String getName() {
@@ -25,16 +23,15 @@ public class VirusPrototype {
         this.name = name;
     }
 
-    public String getFasta() {
-        return fasta;
+    public String getSequence() {
+        return sequence;
     }
 
-    public void setFasta(String fasta) {
-        if(Strings.isBlank(fasta)||fasta.equals("")){
-            criticalLog=("Fasta is empty");
-            this.fasta="";
+    public void setSequence(String sequence) throws VirusModelException {
+        if(Strings.isBlank(sequence)|| sequence.equals("")){
+            throw new VirusModelException("Fasta is empty");
         }else {
-            String f = fasta.replaceAll("a", "")
+            String f = sequence.replaceAll("a", "")
                     .replaceAll("t", "")
                     .replaceAll("g", "")
                     .replaceAll("c", "")
@@ -43,28 +40,29 @@ public class VirusPrototype {
             if (!f.equals("")){
                 StringBuilder message= new StringBuilder();
                 while (!f.equals("")){
-                    fasta=fasta.replaceAll(String.valueOf(f.charAt(0)),"");
+                    sequence = sequence.replaceAll(String.valueOf(f.charAt(0)),"");
                     message.append(f.charAt(0));
                     f=f.replaceAll(String.valueOf(f.charAt(0)),"");
                 }
-                this.fasta=fasta;
+                this.sequence = sequence;
                 dataMessage ="The following characters have been replaced by n: "+ message;
-            }else if ((fasta.length()<= ProcessInfo.getDefiningLength())) {
-                criticalLog=("Fasta is too small");
-                this.fasta="";
+            }else if ((sequence.length()<= ProcessInfo.getDefiningLength())) {
+                throw new VirusModelException("Fasta is too small");
             }else {
-                this.fasta=fasta;
+                this.sequence = sequence;
             }
         }
     }
 
 
-    public String getCriticalError(){
-        return criticalLog;
-    }
 
     public String getDataMessage(){
         return dataMessage;
     }
 
+    static class VirusModelException extends IOException {
+        public VirusModelException(String message) {
+            super(message);
+        }
+    }
 }

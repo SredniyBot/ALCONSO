@@ -7,28 +7,27 @@ import java.util.HashSet;
 @Component
 public class VirusCollection {
 
-    private final HashSet<VirusPrototype> viruses;
-    private final HashSet<VirusPrototype> virusesWithoutN;
+    private final HashSet<VirusModel> viruses;
+    private final HashSet<VirusModel> virusesWithoutN;
 
     VirusCollection(){
         viruses=new HashSet<>();
         virusesWithoutN=new HashSet<>();
     }
 
-    public synchronized void addVirus(VirusPrototype v){
-        if (v.getCriticalError()==null){
-            viruses.add(v);
-            if(!v.isNNN()){
-                virusesWithoutN.add(v);
-            }
+    public synchronized void addVirus(VirusModel v){
+        viruses.add(v);
+        if(!v.isNNN()){
+            virusesWithoutN.add(v);
         }
+
     }
 
-    public HashSet<VirusPrototype> getViruses() {
+    public HashSet<VirusModel> getViruses() {
         return viruses;
     }
 
-    public HashSet<VirusPrototype> getVirusesWithoutN() {
+    public HashSet<VirusModel> getVirusesWithoutN() {
         return virusesWithoutN;
     }
 

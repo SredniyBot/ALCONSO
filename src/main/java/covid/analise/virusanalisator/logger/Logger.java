@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @Component
-@Scope("singleton")
 public class Logger {
 
     private ArrayList<String> programErrors;

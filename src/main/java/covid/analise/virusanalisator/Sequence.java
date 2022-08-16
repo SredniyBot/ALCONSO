@@ -1,10 +1,20 @@
 package covid.analise.virusanalisator;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.util.Objects;
 
-
+@Getter
+@Setter
 public class Sequence implements Comparable<Sequence>{
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
+    @Column(unique = true)
     private String sequence;
     private int quantity;
     private int length;
@@ -24,19 +34,6 @@ public class Sequence implements Comparable<Sequence>{
         minQuantity=quantity;
         maxQuantity=quantity;
     }
-
-    public String getSequence() {
-        return sequence;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
     public void wideLeftSequence(Sequence sequence){
         if(sequence.getMinQuantity()<minQuantity){
             minQuantity=sequence.getMinQuantity();

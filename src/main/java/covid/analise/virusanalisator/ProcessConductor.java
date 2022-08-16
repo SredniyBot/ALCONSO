@@ -4,7 +4,8 @@ import covid.analise.virusanalisator.gui.ProcessInfo;
 import covid.analise.virusanalisator.logger.Logger;
 import covid.analise.virusanalisator.obtaining.Data;
 import covid.analise.virusanalisator.obtaining.VirusCollection;
-import covid.analise.virusanalisator.obtaining.VirusPrototype;
+import covid.analise.virusanalisator.obtaining.VirusModel;
+import covid.analise.virusanalisator.service.FilesCareService;
 import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
@@ -23,36 +24,39 @@ public class ProcessConductor {
     private final ProcessInfo processInfo;
     private final Logger logger;
 
+    private final FilesCareService filesCareService;
     ProcessConductor(Data data,
                      CombineGenome combineGenome,
-                     ProcessInfo processInfo, Logger logger){
+                     ProcessInfo processInfo, Logger logger, FilesCareService filesCareService){
         this.data = data;
         this.combineGenome = combineGenome;this.processInfo = processInfo;
         this.logger = logger;
+        this.filesCareService = filesCareService;
     }
 
 
     public void startWork(){
-        VirusCollection virusCollection= data.getVirusCollection();//Получение всех геномов из файлов
-
-        SequenceCollection sequenceCollection =fillSequenceCollection(virusCollection);
-
-        String result =combineGenome.analisePiecesAndGetResult(sequenceCollection.getBestSequencesAsMap());
-
-        recordResults(result);
-        processInfo.setStatus("Done!");
+        filesCareService.startDownloading();
+//        VirusCollection virusCollection= data.getVirusCollection();//Получение всех геномов из файлов
+//
+//        SequenceCollection sequenceCollection =fillSequenceCollection(virusCollection);
+//
+//        String result =combineGenome.analisePiecesAndGetResult(sequenceCollection.getBestSequencesAsMap());
+//
+//        recordResults(result);
+//        processInfo.setStatus("Done!");
     }
 
 
 
     private SequenceCollection fillSequenceCollection(VirusCollection virusCollection){
         SequenceCollection sequenceCollection =new SequenceCollection(processInfo);
-        HashSet<VirusPrototype> workSet;
+        HashSet<VirusModel> workSet;
 
         if(processInfo.isUseNGenomes()) workSet=virusCollection.getViruses();
         else workSet=virusCollection.getVirusesWithoutN();
 
-        for(VirusPrototype virus:workSet){
+        for(VirusModel virus:workSet){
                 sequenceCollection.addSequences(VirusSlicer.sliceVirus(virus));
                 processInfo.increaseNumberOfAnalysedGenomes();
         }
